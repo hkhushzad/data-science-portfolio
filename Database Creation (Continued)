@@ -1,0 +1,42 @@
+--------------------------------------------------------------------------------
+/*				                 Create Database         	 		          */
+--------------------------------------------------------------------------------
+
+CREATE DATABASE holy_grounds;
+
+--------------------------------------------------------------------------------
+/*				             Connect to Database        		  	          */
+--------------------------------------------------------------------------------
+
+\connect holy_grounds;
+
+--------------------------------------------------------------------------------
+/*				          Create Table Statements              	    	      */
+--------------------------------------------------------------------------------
+
+CREATE TABLE coffee_inventory (
+	sku VARCHAR(100),
+	name VARCHAR(100),
+	roast_type VARCHAR(6),
+	lbs_on_hand NUMERIC(10,2),
+	organic BOOLEAN,
+	price_per_lb NUMERIC(10,2)
+);
+
+CREATE TABLE sales_transactions (
+	receipt_id BIGSERIAL,
+	sale_amount NUMERIC(10,2),
+	sale_type VARCHAR(8),
+	transaction_date TIMESTAMP
+);
+
+CREATE TABLE Stores (
+	store_id BIGSERIAL,
+	store_manager VARCHAR (75),
+	store_phone VARCHAR(14),
+	store_address VARCHAR(100),
+	city VARCHAR(50),
+	zip CHAR(5),
+	state CHAR(2)
+);
+
