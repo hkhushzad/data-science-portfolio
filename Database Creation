@@ -1,53 +1,80 @@
 Hi, these are the databases that I have created:
 
---1
-
 --------------------------------------------------------------------------------
 /*				                 Create Database         	 		          */
 --------------------------------------------------------------------------------
 
-CREATE DATABASE auto_parts_unlimited;
+CREATE DATABASE banking;
 
 --------------------------------------------------------------------------------
 /*				             Connect to Database        		  	          */
 --------------------------------------------------------------------------------
 
-\connect auto_parts_unlimited;
+\connect banking;
 
 --------------------------------------------------------------------------------
-/*				          Create Table Statements              	    	      */
+/*				                 Banking DDL           		  		          */
 --------------------------------------------------------------------------------
 
-CREATE TABLE customers (
-	cust_id BIGSERIAL,
-	first_name VARCHAR(25),
-	last_name VARCHAR(50),
-	phone_number VARCHAR(14),
-	email VARCHAR(100),
-	street_address VARCHAR(100),
-	city VARCHAR(50),
-	zip CHAR(5),
-	state CHAR(2)
+CREATE TABLE branch (
+branch_name VARCHAR(40) PRIMARY KEY,
+branch_city VARCHAR(40) NOT NULL,
+assets MONEY NOT NULL CHECK (assets >= '0.00'::MONEY),
+CONSTRAINT branch_city_check CHECK (branch_city IN 
+('Brooklyn', 'Bronx', 'Manhattan', 'Yonkers'))
 );
 
-CREATE TABLE employees (
-	employee_id BIGSERIAL,
-	first_name VARCHAR(25),
-	last_name VARCHAR(50),
-	phone_number VARCHAR(14),
-	email VARCHAR(100),
-	street_address VARCHAR(100),
-	city VARCHAR(50),
-	zip CHAR(5),
-	state CHAR(2),
-	hire_date DATE,
-	salary NUMERIC(10,2),
-	probation BOOLEAN
+CREATE TABLE customer (
+cust_ID VARCHAR(40) PRIMARY KEY,
+customer_name VARCHAR(40) NOT NULL,
+customer_street VARCHAR(40) NOT NULL,
+customer_city VARCHAR(40)
 );
 
-CREATE TABLE parts_inventory (
-	part_number VARCHAR(50),
-	manufacturer VARCHAR(100),
-	quantity INT,
-	price NUMERIC(10,2)
+CREATE TABLE loan (
+loan_number VARCHAR(40) PRIMARY KEY,
+branch_name VARCHAR(40),
+amount MONEY NOT NULL DEFAULT '0.00'::MONEY CHECK (amount >= '0.00'::MONEY),
+CONSTRAINT branch_name_fkey FOREIGN KEY (branch_name)
+REFERENCES branch(branch_name)
+ON UPDATE CASCADE
+ON DELETE CASCADE
+);
+
+CREATE TABLE borrower (
+cust_ID VARCHAR(40),
+loan_number VARCHAR(40),
+PRIMARY KEY (cust_ID, loan_number),
+CONSTRAINT cust_ID_fkey FOREIGN KEY (cust_ID)
+REFERENCES customer(cust_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT loan_number_fkey FOREIGN KEY (loan_number)
+REFERENCES loan(loan_number)
+ON UPDATE CASCADE
+ON DELETE CASCADE 
+);
+
+CREATE TABLE account (
+account_number VARCHAR(40) PRIMARY KEY,
+branch_name VARCHAR(40),
+balance MONEY NOT NULL DEFAULT '0.00'::MONEY CHECK (balance >= '0.00'::MONEY), 
+CONSTRAINT branch_name_fkey FOREIGN KEY (branch_name)
+REFERENCES branch(branch_name)
+ON UPDATE CASCADE
+ON DELETE CASCADE 
+);
+
+CREATE TABLE depositor (
+cust_ID VARCHAR(40),
+account_number VARCHAR(40),
+PRIMARY KEY (cust_ID, account_number),
+CONSTRAINT cust_ID_fkey FOREIGN KEY(cust_ID)
+REFERENCES customer(cust_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE,
+CONSTRAINT account_number_fkey FOREIGN KEY(account_number)
+REFERENCES account(account_number)
+ON UPDATE CASCADE
+ON DELETE CASCADE 
 );
